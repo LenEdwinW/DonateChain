@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.4;
 
+import "./Milestone.sol";
+
 contract Main {
     struct MilestoneStructure {
         address milestoneContract;
@@ -17,11 +19,12 @@ contract Main {
     event MilestoneCreated(address indexed charity, address milestoneContract);
 
     // Create a new milestone contract for a charity
-    function createMilestone(address _charity) external {
+    function createMilestone(address payable _charity, uint _milestoneAmount, uint _duration, string memory _description) external {
         require(msg.sender == owner, "Only owner can create milestones");
 
         // Deploy new milestone contract
-        Milestone milestone = new Milestone(_charity, address(this));
+        // 
+        Milestone milestone = new Milestone(_charity, _milestoneAmount, _duration, _description);
         
         // Store the milestone details
         charityMilestones[_charity].push(MilestoneStructure({
