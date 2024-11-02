@@ -14,7 +14,6 @@ const charityDetails = {
     },
 };
 
-
 const Charities = () => {
     const MILESTONE_ADDRESS = "0x204a3aE7B6921100655640eD3cB42ED533f3EF74"
 
@@ -44,7 +43,7 @@ const Charities = () => {
     };
 
     return (
-        <div style={{ padding: "20px", border: "1px solid #ddd", borderRadius: "8px", marginTop: "20px" }}>
+        <div style={{ padding: "20px", border: "1px solid #ddd", borderRadius: "8px", marginTop: "8px" }}>
             <h3>{charityDetails.name}</h3>
             <p>{charityDetails.description}</p>
 
@@ -65,7 +64,5 @@ const Charities = () => {
         </div>
     );
 };
-
-
 
 export default Charities;

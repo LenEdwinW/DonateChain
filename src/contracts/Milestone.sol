@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.4;
 
+import "./Main.sol";
+
 contract Milestone {
     address payable public charity;
+    address public mainContract;
     uint public milestoneAmount;
     uint public milestoneEndTime;
     bool public milestoneCompleted;
@@ -16,12 +19,13 @@ contract Milestone {
     event MilestoneFailed();
     event DonationRefunded(address donor, uint amount);
 
-    constructor(address payable _charity, uint _milestoneAmount, uint _duration,string memory _description) {
+    constructor(address payable _charity, uint _milestoneAmount, uint _duration, string memory _description) {
         charity = _charity;
         milestoneAmount = _milestoneAmount;
         milestoneEndTime = block.timestamp + _duration;
         milestoneCompleted = false;
         milestoneDescription = _description;
+        mainContract = msg.sender;  // Set the main contract as the caller
     }
 
     modifier onlyCharity() {
@@ -47,10 +51,17 @@ contract Milestone {
         emit DonationReceived(msg.sender, msg.value);
 
         if (address(this).balance >= milestoneAmount) {
-            milestoneCompleted = true;
-            emit MilestoneCompleted();
-            charity.transfer(address(this).balance);
+            completeMilestone();
         }
+    }
+
+    function completeMilestone() private {
+        milestoneCompleted = true;
+        emit MilestoneCompleted();
+        charity.transfer(address(this).balance);
+        
+        // Notify the main contract that this milestone is complete
+        Main(mainContract).markMilestoneComplete(charity, address(this));
     }
 
     function getMilestoneStatus() public view returns (string memory status) {

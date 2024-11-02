@@ -72,7 +72,7 @@ const Home = () => {
         </Menu.Item>
       </Menu>
       <Container style={{ flex: 1, padding: "20px", margin: 0 }}>
-        <Header as="h1" style={{ padding: "10px 0" }}>DonateChain</Header>
+        <Header as="h1" style={{ padding: "5px 0" }}>DonateChain</Header>
         <Dropdown 
           placeholder="Select Currency"
           selection
@@ -81,10 +81,10 @@ const Home = () => {
           onChange={handleCurrencyChange}
           style={{ marginBottom: '20px' }}
         />
-        <Statistic style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <Statistic style={{ display: "flex", justifyContent: "center", alignItems: "center"}}>
           <Statistic.Value>{selectedCurrency} {donationInSelectedCurrency}</Statistic.Value>
           <Statistic.Label>Contributed to Charity</Statistic.Label>
-          <Statistic.Label>
+          <Statistic.Label style = {{padding: "10px 0"}}>
             1 ETH equivalent to {selectedCurrency} {ethToSelectedCurrency}
           </Statistic.Label>
         </Statistic>
