@@ -3,13 +3,17 @@ import { Container, Header, Menu, Segment, Statistic, Icon, Dropdown } from "sem
 import { useNavigate } from "react-router-dom";
 import Charities from "./charities";
 import MyDonations from "./mydonations";
+import { ethers } from 'ethers';
+import { mainContractABI } from "../abis/MainContractABI";
+import { milestoneContractABI } from '../abis/MilestoneABI';
+const { BigNumber, utils } = ethers;
 
 const Home = () => {
   const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState("myDonations");
   const [conversionRates, setConversionRates] = useState(null);
   const [selectedCurrency, setSelectedCurrency] = useState("SGD");
-  const [donationAmount, setDonationAmount] = useState(1);
+  const [donationAmount, setDonationAmount] = useState(0);
 
   const currencyOptions = [
     { key: 'SGD', value: 'SGD', text: 'SGD' },
@@ -32,7 +36,36 @@ const Home = () => {
         console.error("Error fetching conversion rates:", error);
       }
     };
+
+    const fetchTotalDonationAmount = async () => {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = provider.getSigner();
+      const mainContractAddress = "0x1C9f1cA0A843CCd7C00edfd14D2c981F8162544C";
+      const mainContract = new ethers.Contract(mainContractAddress, mainContractABI, signer);
+
+      // Validate contract address
+      if (!ethers.isAddress(mainContractAddress)) {
+        console.error("Invalid contract address");
+        return;
+      }
+
+      try {
+        const milestones = await mainContract.getCharityMilestones(await signer.getAddress());
+        let totalDonations = BigNumber.from(0);
+        for (const milestone of milestones) {
+          const milestoneContract = new ethers.Contract(milestone.milestoneContract, milestoneContractABI, signer);
+          const donationAmount = await milestoneContract.donations(await signer.getAddress());
+          totalDonations = totalDonations.add(donationAmount);
+        }
+
+        setDonationAmount(utils.formatEther(totalDonations));
+      } catch (error) {
+        console.error("Error fetching total donation amount:", error);
+      }
+    };
+
     fetchConversionRates();
+    fetchTotalDonationAmount();
   }, []);
 
   const handleLogout = () => {
@@ -57,7 +90,7 @@ const Home = () => {
 
   return (
     <Container style={{ display: "flex", backgroundColor: "white", height: "100vh", width: "auto", margin: 0, padding: 0 }}>
-      <Menu vertical tabularstyle={{ width: "200px", margin: 0 }} color="red">
+      <Menu vertical tabular style={{ width: "200px", margin: 0 }} color="red">
         <Menu.Item name="myDonations" active={activeItem === "myDonations"} onClick={() => handleItemClick("myDonations")}>
           <Icon name="money" />
           My Donations
@@ -84,7 +117,7 @@ const Home = () => {
         <Statistic style={{ display: "flex", justifyContent: "center", alignItems: "center"}}>
           <Statistic.Value>{selectedCurrency} {donationInSelectedCurrency}</Statistic.Value>
           <Statistic.Label>Contributed to Charity</Statistic.Label>
-          <Statistic.Label style = {{padding: "10px 0"}}>
+          <Statistic.Label style={{ padding: "10px 0" }}>
             1 ETH equivalent to {selectedCurrency} {ethToSelectedCurrency}
           </Statistic.Label>
         </Statistic>
