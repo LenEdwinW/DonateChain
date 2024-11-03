@@ -86,17 +86,6 @@ contract Milestone {
         Main(mainContract).markMilestoneComplete(charity, address(this));
     }
 
-    //method returns whether milestone is still active or not
-    function getMilestoneStatus() public view returns (string memory status) {
-        if (milestoneCompleted) {
-            return "Milestone completed.";
-        } else if (block.timestamp > milestoneEndTime) {
-            return "Milestone failed.";
-        } else {
-            return "Milestone ongoing.";
-        }
-    }
-
     //method checks whether milestone already failed, if yes refunds donations
     function checkMilestoneFailure() public onlyMainContract {
         require(block.timestamp >= milestoneEndTime, "Milestone is still active.");
