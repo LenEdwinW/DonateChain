@@ -14,7 +14,7 @@ contract Main {
     mapping(address => MilestoneStructure[]) public charityMilestones;
 
     //adress of creator of the contract (most likely charity or donationOrganization or individual)
-    address public owner;
+    address public immutable owner;
 
     //creates this main Contract
     constructor() {
@@ -25,12 +25,15 @@ contract Main {
     event MilestoneCreated(address indexed charity, address milestoneContract);
 
     //creates a new milestone contract for this charity
-    function createMilestone(address payable _charity, uint _milestoneAmount, uint _duration, string memory _description) external {
-        require(msg.sender == owner, "Only owner can create milestones");
+    function createMilestone(address payable _charity, uint _milestoneAmount, uint _duration, string memory _description) external returns (address){
+        require(msg.sender == owner, "Only owner can create milestones.");
+        require(_milestoneAmount > 0, "Milestone amount must be positive.");
+        require(_duration > 0, "Duration must be positive.");
 
         // Deploy new milestone contract
         Milestone milestone = new Milestone(_charity, _milestoneAmount, _duration, _description);
-        
+        address newContractAddress = address(milestone);
+
         // Store the milestone details
         charityMilestones[_charity].push(MilestoneStructure({
             milestoneContract: address(milestone),
@@ -38,6 +41,8 @@ contract Main {
         }));
 
         emit MilestoneCreated(_charity, address(milestone));
+
+        return newContractAddress;
     }
 
     // Mark milestone as complete, called by the milestone contract

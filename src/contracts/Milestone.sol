@@ -42,6 +42,12 @@ contract Milestone {
         _;
     }
 
+    //checks that the main contract called this specific method
+    modifier onlyMainContract() {
+        require(msg.sender == mainContract, "Only Main contract can call this");
+        _;
+    }
+
     //method which enables donors to donate (main part of project)
     function donate() external payable milestoneActive {
         require(msg.value > 0, "Donation must be greater than 0.");
@@ -60,7 +66,7 @@ contract Milestone {
     }
 
     //completes the milestone, transfers the money to the charity
-    function completeMilestone() private {
+    function completeMilestone() private onlyMainContract {
         milestoneCompleted = true;
         emit MilestoneCompleted();
         charity.transfer(address(this).balance);
@@ -81,7 +87,7 @@ contract Milestone {
     }
 
     //method checks whether milestone already failed, if yes refunds donations
-    function checkMilestoneFailure() public {
+    function checkMilestoneFailure() public onlyMainContract {
         require(block.timestamp >= milestoneEndTime, "Milestone is still active.");
         require(!milestoneCompleted, "Milestone already completed.");
 
