@@ -25,6 +25,9 @@ contract Milestone {
     event MilestoneFailed();
     event DonationRefunded(address donor, uint amount);
 
+    //lock variable
+    bool private locked;
+
     //create a new milestone (only called by the main contract)
     constructor(address payable _charity, uint _milestoneAmount, uint _duration, string memory _description) {
         charity = _charity;
@@ -48,8 +51,16 @@ contract Milestone {
         _;
     }
 
+    //adds a Reentrancy guard
+    modifier nonReentrant() {
+        require(!locked, "Reentrant call detected");
+        locked = true;
+        _;
+        locked = false;
+    }
+
     //method which enables donors to donate (main part of project)
-    function donate() external payable milestoneActive {
+    function donate() external payable milestoneActive nonReentrant {
         require(msg.value > 0, "Donation must be greater than 0.");
 
         if (donations[msg.sender] == 0) {
@@ -99,7 +110,7 @@ contract Milestone {
     }
 
     //refunds the donations to all donors
-    function refundDonations() private {
+    function refundDonations() private nonReentrant {
         for (uint i = 0; i < donors.length; i++) {
             address donor = donors[i];
             uint amount = donations[donor];
