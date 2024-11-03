@@ -4,21 +4,28 @@ pragma solidity ^0.8.4;
 import "./Main.sol";
 
 contract Milestone {
+
+    //adresses for charity and the main Contract(charity)
     address payable public charity;
     address public mainContract;
+
+    //milestone attributes
     uint public milestoneAmount;
     uint public milestoneEndTime;
     bool public milestoneCompleted;
     string public milestoneDescription;
 
+    //keeping track of donations
     mapping(address => uint256) public donations;
     address[] public donors;
 
+    //events
     event DonationReceived(address donor, uint amount);
     event MilestoneCompleted();
     event MilestoneFailed();
     event DonationRefunded(address donor, uint amount);
 
+    //create a new milestone (only called by the main contract)
     constructor(address payable _charity, uint _milestoneAmount, uint _duration, string memory _description) {
         charity = _charity;
         milestoneAmount = _milestoneAmount;
@@ -28,17 +35,14 @@ contract Milestone {
         mainContract = msg.sender;  // Set the main contract as the caller
     }
 
-    modifier onlyCharity() {
-        require(msg.sender == charity, "Only charity can call this.");
-        _;
-    }
-
+    //checks that the milestone end time is not in the past
     modifier milestoneActive() {
         require(block.timestamp <= milestoneEndTime, "Milestone ended.");
         require(!milestoneCompleted, "Milestone already completed.");
         _;
     }
 
+    //method which enables donors to donate (main part of project)
     function donate() external payable milestoneActive {
         require(msg.value > 0, "Donation must be greater than 0.");
 
@@ -55,6 +59,7 @@ contract Milestone {
         }
     }
 
+    //completes the milestone, transfers the money to the charity
     function completeMilestone() private {
         milestoneCompleted = true;
         emit MilestoneCompleted();
@@ -64,6 +69,7 @@ contract Milestone {
         Main(mainContract).markMilestoneComplete(charity, address(this));
     }
 
+    //method returns whether milestone is still active or not
     function getMilestoneStatus() public view returns (string memory status) {
         if (milestoneCompleted) {
             return "Milestone completed.";
@@ -74,6 +80,7 @@ contract Milestone {
         }
     }
 
+    //method checks whether milestone already failed, if yes refunds donations
     function checkMilestoneFailure() public {
         require(block.timestamp >= milestoneEndTime, "Milestone is still active.");
         require(!milestoneCompleted, "Milestone already completed.");
@@ -85,6 +92,7 @@ contract Milestone {
         }
     }
 
+    //refunds the donations to all donors
     function refundDonations() private {
         for (uint i = 0; i < donors.length; i++) {
             address donor = donors[i];
