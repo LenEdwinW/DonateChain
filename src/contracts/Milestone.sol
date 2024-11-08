@@ -94,21 +94,18 @@ contract Milestone {
         if (address(this).balance < milestoneAmount) {
             milestoneCompleted = true;
             emit MilestoneFailed();
-            refundDonations();
+            withdrawDonation();
         }
     }
 
-    //refunds the donations to all donors
-    function refundDonations() private nonReentrant {
-        for (uint i = 0; i < donors.length; i++) {
-            address donor = donors[i];
-            uint amount = donations[donor];
-
-            if (amount > 0) {
-                donations[donor] = 0;
-                payable(donor).transfer(amount);
-                emit DonationRefunded(donor, amount);
-            }
-        }
+    //refunds the donations to donor
+    function withdrawDonation() private nonReentrant {
+        uint amount = donations[msg.sender];
+        require(amount > 0, "No funds to withdraw");
+        donations[msg.sender] = 0;
+        payable(msg.sender).transfer(amount);
+        emit DonationRefunded(msg.sender, amount);
     }
+
+    
 }

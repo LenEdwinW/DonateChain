@@ -16,13 +16,16 @@ const charityDetails = {
 };
 
 const Charities = () => {
-    const MILESTONE_ADDRESS = "0xbe5c2c9fac4a94fa78edbf5c263b26bce5c62258"
+    const MILESTONE_ADDRESS = "0xc2c6c814f60d9053186060d35e0bd3086c3d173e"
     const [donationAmount, setDonationAmount] = useState("");
     const [message, setMessage] = useState("");
     const [donating, setDonating] = useState(false);
     const [donated, setDonated] = useState(false);
+    const [checking, setChecking] = useState(false);
+    const [checked, setChecked] = useState(false);
     const [error, setError] = useState(false);
     const [currentBalance, setCurrentBalance] = useState(0);
+    const [milestoneCompleted, setMilestoneCompleted] = useState(false);
 
 
     const fetchTotalDonations = async () => {
@@ -41,9 +44,31 @@ const Charities = () => {
         }
     };
 
+    const fetchMilestoneStatus = async () => {
+        try {
+            if (!window.ethereum) {
+                alert("Please install MetaMask.");
+                return;
+            }
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();  
+            const milestoneContract = new ethers.Contract(MILESTONE_ADDRESS, milestoneContractABI, signer);
+            const isCompleted = await milestoneContract.milestoneCompleted();  
+            setMilestoneCompleted(isCompleted);
+        } catch (error) {
+            console.error("Error fetching milestone status:", error);
+        }
+    };
+
     useEffect(() => {
         fetchTotalDonations();
+        fetchMilestoneStatus();
+        const intervalId = setInterval(fetchMilestoneStatus, 5000); 
+        return () => {
+            clearInterval(intervalId);
+        };
     }, [MILESTONE_ADDRESS]);
+
 
     const donate = async () => {
         try {
@@ -71,6 +96,34 @@ const Charities = () => {
         }
     };
 
+
+
+
+    const withdrawDonation = async () => {
+        try {
+            if (!window.ethereum) {
+                alert("Please install MetaMask.");
+                return;
+            }
+            setChecking(true)
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const milestoneContract = new ethers.Contract(MILESTONE_ADDRESS, milestoneContractABI, signer);
+
+            const transaction = await milestoneContract.checkMilestoneFailure();
+            await transaction.wait();
+            setChecked(true);
+            setChecking(false);
+
+            // setMessage("Thank you for your donation!");
+        } catch (error) {
+            console.error("Checking milestone failed:", error);
+            setError(true);
+            setMessage("withdrawal failed. Please try again.");
+        }
+    };
+
+
     const progressPercentage = (parseFloat(ethers.formatEther(currentBalance)) / parseFloat((charityDetails.milestone.goal))) * 100;
 
 
@@ -85,32 +138,58 @@ const Charities = () => {
                 <p>Goal: {charityDetails.milestone.goal} ETH</p>
                 <p>Current Balance: {ethers.formatEther(currentBalance)} ETH</p> {/* Display current balance */}
 
-                <input
-                    type="number"
-                    placeholder="Enter amount in ETH"
-                    value={donationAmount}
-                    onChange={(e) => setDonationAmount(e.target.value)}
-                    style={{ marginRight: "10px", padding: "5px" }}
-                />
-                <button onClick={donate} style={{ padding: "5px 15px", backgroundColor: "#28a745", color: "#fff", border: "none", borderRadius: "4px" }}>
-                    Donate
+                <div >
+                    <input
+                        type="number"
+                        placeholder="Enter amount in ETH"
+                        value={donationAmount}
+                        onChange={(e) => setDonationAmount(e.target.value)}
+                        style={{ marginRight: "10px", padding: "5px" }}
+                    />
+                    <button onClick={donate} style={{ padding: "5px 15px", backgroundColor: "#28a745", color: "#fff", border: "none", borderRadius: "4px" }}>
+                        Donate
+                    </button>
+                    {donating && (
+                        <>
+                            <p>Processing donation. Please wait...</p>
+                            <LinearProgress color="success" style={{ marginTop: "10px" }} />
+                        </>
+                    )}
+                    {donated && (
+                        <>
+                            <p>Thank you for your donations</p>
+                            <LinearProgress variant='determinate' value={100} color="success" style={{ marginTop: "10px" }} />
+                        </>
+                    )}
+                    {error && (
+                        <>
+                            <p>Error has occured in donation</p>
+                            <LinearProgress variant='determinate' value={100} color="secondary" style={{ marginTop: "10px" }} />
+                        </>
+                    )}
+                </div>
+            </div>
+
+            <div>
+                <button onClick={withdrawDonation} style={{ padding: "5px 15px", backgroundColor: "#28a745", color: "#fff", border: "none", borderRadius: "4px" }}>
+                    withdraw donations
                 </button>
-                {donating && (
+                {checking && (
                     <>
-                        <p>Processing donation. Please wait...</p>
+                        <p>Checking milestone status. Please wait...</p>
                         <LinearProgress color="success" style={{ marginTop: "10px" }} />
                     </>
                 )}
-                {donated && (
+                {checked && (
                     <>
-                        <p>Thank you for your donations</p>
-                        <LinearProgress variant = 'determinate' value={100}  color="success" style={{ marginTop: "10px" }} />
+                        <p>retrieved</p>
+                        <LinearProgress variant='determinate' value={100} color="success" style={{ marginTop: "10px" }} />
                     </>
                 )}
                 {error && (
                     <>
                         <p>Error has occured in donation</p>
-                        <LinearProgress variant = 'determinate' value={100}  color="secondary" style={{ marginTop: "10px" }} />
+                        <LinearProgress variant='determinate' value={100} color="secondary" style={{ marginTop: "10px" }} />
                     </>
                 )}
             </div>
