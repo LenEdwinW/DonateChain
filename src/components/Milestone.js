@@ -8,7 +8,6 @@ import { CircularProgress, LinearProgress } from "@mui/material";
 
 const Milestone = ({ charityDetails }) => {
 	const MILESTONE_ADDRESS = charityDetails.milestone.address;
-	console.log("hello", MILESTONE_ADDRESS);
 	const [donationAmount, setDonationAmount] = useState("");
 	const [donating, setDonating] = useState(false);
 	const [donated, setDonated] = useState(false);
@@ -45,6 +44,13 @@ const Milestone = ({ charityDetails }) => {
 			const provider = new ethers.BrowserProvider(window.ethereum);
 			const signer = await provider.getSigner();
 			const milestoneContract = new ethers.Contract(MILESTONE_ADDRESS, milestoneContractABI, signer);
+
+			const milestoneFailed = await milestoneContract.checkMilestoneFailed();
+			console.log("Fail: " ,milestoneFailed );
+			if (milestoneFailed) {
+				setMilestoneFailed(true);
+			}
+
 			milestoneContract.on("MilestoneFailed", () => {
 				console.log("MilestoneFailed event detected");
 				setMilestoneFailed(true);
@@ -117,7 +123,7 @@ const Milestone = ({ charityDetails }) => {
 			const signer = await provider.getSigner();
 			const milestoneContract = new ethers.Contract(MILESTONE_ADDRESS, milestoneContractABI, signer);
 
-			const transaction = await milestoneContract.checkMilestoneFailure();
+			const transaction = await milestoneContract.withdrawDonation();
 			await transaction.wait();
 			setChecked(true);
 			setChecking(false);

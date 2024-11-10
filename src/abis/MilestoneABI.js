@@ -90,9 +90,15 @@ export const milestoneContractABI = [
 	},
 	{
 		"inputs": [],
-		"name": "checkMilestoneFailure",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"name": "checkMilestoneFailed",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -203,6 +209,13 @@ export const milestoneContractABI = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdrawDonation",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]

@@ -86,20 +86,10 @@ contract Milestone {
         Main(mainContract).markMilestoneComplete(charity, address(this));
     }
 
-    //method checks whether milestone already failed, if yes refunds donations
-    function checkMilestoneFailure() public  {
-        require(block.timestamp >= milestoneEndTime, "Milestone is still active.");
-        require(!milestoneCompleted, "Milestone already completed.");
-
-        if (address(this).balance < milestoneAmount) {
-            milestoneCompleted = true;
-            emit MilestoneFailed();
-            withdrawDonation();
-        }
-    }
+   
 
     //refunds the donations to donor
-    function withdrawDonation() private nonReentrant {
+    function withdrawDonation() public nonReentrant {
         uint amount = donations[msg.sender];
         require(amount > 0, "No funds to withdraw");
         donations[msg.sender] = 0;
@@ -107,5 +97,12 @@ contract Milestone {
         emit DonationRefunded(msg.sender, amount);
     }
 
-    
+    // method checks whether milestone already failed
+    function checkMilestoneFailed() public view returns (bool) {
+    if (block.timestamp >= milestoneEndTime && address(this).balance < milestoneAmount) {
+        return true;
+    }
+    return false;
+    }
+
 }

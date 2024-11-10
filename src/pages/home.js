@@ -7,7 +7,7 @@ import { ethers, formatEther } from "ethers";
 import MainContractABI from "../abis/MainContractABI";
 import MilestoneABI from "../abis/MilestoneABI";
 
-const MAIN_CONTRACT_ADDRESS = "0x9c611e65196ea3e0028bbc3ea45b6f2ede65f90a";
+const MAIN_CONTRACT_ADDRESS = "0xEF2e373a2c97647A90546a79d107aED16458213a";
 const CHARITY_ADDRESS = "0x4980D1CBE02332B11d9fC3AcCD637689ED889716";
 
 const Home = () => {
