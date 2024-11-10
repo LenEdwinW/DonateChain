@@ -5,7 +5,7 @@ const charityDetails1 = {
     name: "Save the Ocean Foundation",
     description: "A charity focused on protecting marine life and reducing plastic waste in oceans.",
     milestone: {
-        address: "0xab7d1b5e18fbbeda1bdb71fe3b9e0bcf5e49fcb0", 
+        address: "0xcaaa4e3e83ba8e1bcda201221f81dbcb92e8d82d", 
         goal: "0.1",
         description: "Fund for beach clean-up activities and awareness programs.",
     },
