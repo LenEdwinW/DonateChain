@@ -149,3 +149,5 @@ export const mainContractABI = [
 		"type": "function"
 	}
 ]
+
+export default mainContractABI;

@@ -206,3 +206,5 @@ export const milestoneContractABI = [
 		"type": "function"
 	}
 ]
+
+export default milestoneContractABI;
