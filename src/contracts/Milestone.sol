@@ -83,7 +83,7 @@ contract Milestone {
         charity.transfer(address(this).balance);
         
         // Notify the main contract that this milestone is complete
-        Main(mainContract).markMilestoneComplete(charity, address(this));
+        // Main(mainContract).markMilestoneComplete(charity, address(this));
     }
 
     //method checks whether milestone already failed, if yes refunds donations
