@@ -5,8 +5,8 @@ const charityDetails1 = {
     name: "Save the Ocean Foundation",
     description: "A charity focused on protecting marine life and reducing plastic waste in oceans.",
     milestone: {
-        address: "0x187f5e7ce97db139fae2f75998a67c3d8bfbfc15", 
-        goal: "0.01",
+        address: "0xA8E104f6dF81f68ad2C5c3431ed4e19b9646c400", 
+        goal: "0.1",
         description: "Fund for beach clean-up activities and awareness programs.",
     },
 };
@@ -36,8 +36,8 @@ const Charities = () => {
     return (
         <div>
             <Milestone charityDetails={charityDetails1} />
-            <Milestone charityDetails={charityDetails2} />
-            <Milestone charityDetails={charityDetails3} />
+            {/* <Milestone charityDetails={charityDetails2} /> */}
+            {/* <Milestone charityDetails={charityDetails3} /> */}
         </div>
     )
 };
