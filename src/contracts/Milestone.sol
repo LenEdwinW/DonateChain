@@ -77,7 +77,7 @@ contract Milestone {
     }
 
     //completes the milestone, transfers the money to the charity
-    function completeMilestone() private onlyMainContract {
+    function completeMilestone() private  {
         milestoneCompleted = true;
         emit MilestoneCompleted();
         charity.transfer(address(this).balance);
@@ -87,7 +87,7 @@ contract Milestone {
     }
 
     //method checks whether milestone already failed, if yes refunds donations
-    function checkMilestoneFailure() public onlyMainContract {
+    function checkMilestoneFailure() public  {
         require(block.timestamp >= milestoneEndTime, "Milestone is still active.");
         require(!milestoneCompleted, "Milestone already completed.");
 

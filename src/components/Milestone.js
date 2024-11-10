@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import Web3 from "web3";
+import Web3, { RpcError } from "web3";
 import { milestoneContractABI } from "../abis/MilestoneABI";
 import { CircularProgress, LinearProgress } from "@mui/material";
 
@@ -144,34 +144,39 @@ const Milestone = ({ charityDetails }) => {
 				<p>Current Balance: {ethers.formatEther(currentBalance)} ETH</p>
 
 				<div >
-					<input
-						type="number"
-						placeholder="Enter amount in ETH"
-						value={donationAmount}
-						onChange={(e) => setDonationAmount(e.target.value)}
-						style={{ marginRight: "10px", padding: "5px" }}
-					/>
-					<button onClick={donate} style={{ padding: "5px 15px", backgroundColor: "#28a745", color: "#fff", border: "none", borderRadius: "4px" }}>
-						Donate
-					</button>
-					{donating && (
+					{!milestoneCompleted && !milestoneFailed && (
 						<>
-							<p>Processing donation. Please wait...</p>
-							<LinearProgress color="success" style={{ marginTop: "10px" }} />
+							<input
+								type="number"
+								placeholder="Enter amount in ETH"
+								value={donationAmount}
+								onChange={(e) => setDonationAmount(e.target.value)}
+								style={{ marginRight: "10px", padding: "5px" }}
+							/>
+							<button onClick={donate} style={{ padding: "5px 15px", backgroundColor: "#28a745", color: "#fff", border: "none", borderRadius: "4px" }}>
+								Donate
+							</button>
+							{donating && (
+								<>
+									<p>Processing donation. Please wait...</p>
+									<LinearProgress color="success" style={{ marginTop: "10px" }} />
+								</>
+							)}
+							{donated && (
+								<>
+									<p>Thank you for your donations</p>
+									<LinearProgress variant='determinate' value={100} color="success" style={{ marginTop: "10px" }} />
+								</>
+							)}
+							{error && (
+								<>
+									<p>Error has occured in donation</p>
+									<LinearProgress variant='determinate' value={100} color="secondary" style={{ marginTop: "10px" }} />
+								</>
+							)}
 						</>
 					)}
-					{donated && (
-						<>
-							<p>Thank you for your donations</p>
-							<LinearProgress variant='determinate' value={100} color="success" style={{ marginTop: "10px" }} />
-						</>
-					)}
-					{error && (
-						<>
-							<p>Error has occured in donation</p>
-							<LinearProgress variant='determinate' value={100} color="secondary" style={{ marginTop: "10px" }} />
-						</>
-					)}
+
 				</div>
 			</div>
 
@@ -212,7 +217,7 @@ const Milestone = ({ charityDetails }) => {
 							)}
 							{error && (
 								<>
-									<p>Error has occured in donation</p>
+									<p>Error has occured in withdrawing donation</p>
 									<LinearProgress variant='determinate' value={100} color="secondary" style={{ marginTop: "10px" }} />
 								</>
 							)}
