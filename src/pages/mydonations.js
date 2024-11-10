@@ -87,7 +87,7 @@ const MyDonations = () => {
     }, []);
 
     return (
-        <div style={{ display: "flex", gap: "20px", justifyContent: "center", alignItems: "flex-start" }}>
+        <div>
             {donations.map((donation, index) => (
                 <DonationCard
                     key={index}
