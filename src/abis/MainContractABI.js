@@ -148,4 +148,4 @@ export const mainContractABI = [
 		"stateMutability": "view",
 		"type": "function"
 	}
-];
+]
