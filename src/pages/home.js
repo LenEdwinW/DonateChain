@@ -20,6 +20,11 @@ const Home = () => {
     { key: 'USD', value: 'USD', text: 'USD' },
     { key: 'EUR', value: 'EUR', text: 'EUR' },
     { key: 'GBP', value: 'GBP', text: 'GBP' },
+    { key: 'AUD', value: 'AUD', text: 'AUD' },
+    { key: 'CAD', value: 'CAD', text: 'CAD' },
+    { key: 'NZD', value: 'NZD', text: 'NZD' },
+    { key: 'IDR', value: 'IDR', text: 'IDR' },
+    { key: 'INR', value: 'INR', text: 'INR' },
   ];
 
   useEffect(() => {
@@ -27,7 +32,7 @@ const Home = () => {
       try {
         console.log("Fetching conversion rates from CryptoCompare...");
         const response = await fetch(
-          `https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,SGD,EUR,GBP`
+          `https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,SGD,EUR,GBP,AUD,CAD,NZD,IDR,INR`
         );
         const data = await response.json();
         console.log("Fetched data:", data);
