@@ -15,8 +15,8 @@ const charityDetails2 = {
     name: "Children's Education Fund",
     description: "A charity that provides educational resources and scholarships for underprivileged children around the world.",
     milestone: {
-        address: "0x20504E5eE08D3cD1Fb73Fe2287640CEb313e0f0e", 
-        goal: "1.0",
+        address: "0xe505D9A7023C355742e57B0D1cCd0D2453364e86", 
+        goal: "0.2",
         description: "Fund scholarships and build schools in underserved communities.",
     },
 };
@@ -36,8 +36,7 @@ const Charities = () => {
     return (
         <div>
             <Milestone charityDetails={charityDetails1} />
-            {/* <Milestone charityDetails={charityDetails2} /> */}
-            {/* <Milestone charityDetails={charityDetails3} /> */}
+            <Milestone charityDetails={charityDetails2} /> 
         </div>
     )
 };
