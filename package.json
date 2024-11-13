@@ -2,7 +2,7 @@
   "name": "donatechain",
   "version": "0.1.0",
   "private": true,
-  "homepage": "/donatechain",
+  "homepage": "https://github.com/LenEdwinW/DonateChain",
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
@@ -22,6 +22,8 @@
     "web3": "^4.13.0"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -49,6 +51,7 @@
     "@eslint/js": "^9.14.0",
     "eslint": "^8.57.1",
     "eslint-plugin-react": "^7.37.2",
+    "gh-pages": "^6.2.0",
     "globals": "^15.12.0"
   }
 }
