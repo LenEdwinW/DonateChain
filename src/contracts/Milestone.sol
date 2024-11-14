@@ -51,16 +51,9 @@ contract Milestone {
         _;
     }
 
-    //adds a Reentrancy guard
-    modifier nonReentrant() {
-        require(!locked, "Reentrant call detected");
-        locked = true;
-        _;
-        locked = false;
-    }
 
     //method which enables donors to donate (main part of project)
-    function donate() external payable milestoneActive nonReentrant {
+    function donate() external payable milestoneActive {
         require(msg.value > 0, "Donation must be greater than 0.");
 
         if (donations[msg.sender] == 0) {
@@ -89,7 +82,7 @@ contract Milestone {
    
 
     //refunds the donations to donor
-    function withdrawDonation() public nonReentrant {
+    function withdrawDonation() public {
         uint amount = donations[msg.sender];
         require(amount > 0, "No funds to withdraw");
         donations[msg.sender] = 0;
